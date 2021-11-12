@@ -13,6 +13,7 @@ export class TemaComponent implements OnInit {
 
   tema: Tema = new Tema() 
   listaTemas: Tema[]
+  idTema: number
 
   constructor(
     private router: Router,
