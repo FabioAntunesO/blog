@@ -1,10 +1,11 @@
+import { AlertasService } from './../../service/alertas.service';
+import { TemaService } from './../../service/tema.service';
+import { Tema } from './../../model/Tema';
+import { environment } from './../../../environments/environment.prod';
+import { PostagemService } from './../../service/postagem.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Postagem } from './../../model/Postagem';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Postagem } from 'src/app/model/Postagem';
-import { Tema } from 'src/app/model/Tema';
-import { PostagemService } from 'src/app/service/postagem.service';
-import { TemaService } from 'src/app/service/tema.service';
-import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-postagem-edit',
@@ -23,21 +24,21 @@ export class PostagemEditComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private postagemService: PostagemService,
-    private temaService: TemaService
+    private temaService: TemaService,
+    private alertas: AlertasService
   ) { }
 
-  ngOnInit(){
+  ngOnInit() {
 
     window.scroll(0,0)
 
-    if (environment.token == '') {
-      //alert('Sua seção expirou, faça o login novamente.')
+    if(environment.token == ''){
       this.router.navigate(['/entrar'])
-      this.findAllTemas()
     }
 
     let id = this.route.snapshot.params['id']
-
+    this.findByIdPostagem(id)
+    this.findAllTemas()
   }
 
   findByIdPostagem(id: number){
@@ -46,14 +47,14 @@ export class PostagemEditComponent implements OnInit {
     })
   }
 
-  findByIdTema() {
+  findByIdTema(){
     this.temaService.getByIdTema(this.idTema).subscribe((resp: Tema) => {
       this.tema = resp
     })
   }
 
-  findAllTemas() {
-    this.temaService.getAllTema().subscribe((resp: Tema[]) => {
+  findAllTemas(){
+    this.temaService.getAllTema().subscribe((resp: Tema[]) =>{
       this.listaTemas = resp
     })
   }
@@ -64,10 +65,9 @@ export class PostagemEditComponent implements OnInit {
 
     this.postagemService.putPostagem(this.postagem).subscribe((resp: Postagem) => {
       this.postagem = resp
-      alert('Postagem atualizada com sucesso!')
+      this.alertas.showAlertSuccess('Postagem atualizada com sucesso!')
       this.router.navigate(['/inicio'])
     })
-
   }
 
 }

@@ -1,9 +1,9 @@
+import { AlertasService } from './../../service/alertas.service';
+import { environment } from './../../../environments/environment.prod';
+import { PostagemService } from './../../service/postagem.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Postagem } from './../../model/Postagem';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Postagem } from 'src/app/model/Postagem';
-import { Tema } from 'src/app/model/Tema';
-import { PostagemService } from 'src/app/service/postagem.service';
-import { environment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-postagem-delete',
@@ -13,28 +13,25 @@ import { environment } from 'src/environments/environment.prod';
 export class PostagemDeleteComponent implements OnInit {
 
   postagem: Postagem = new Postagem()
-  idPostagem: number
-
+  idPost: number
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private postagemService: PostagemService,
+    private alertas: AlertasService
   ) { }
 
-  ngOnInit(){
+  ngOnInit() {
 
     window.scroll(0,0)
 
-    if (environment.token == '') {
-      //alert('Sua seção expirou, faça o login novamente.')
+    if(environment.token == ''){
       this.router.navigate(['/entrar'])
-
     }
 
-    this.idPostagem = this.route.snapshot.params['id']
-    this.findByIdPostagem(this.idPostagem)
-
+    this.idPost = this.route.snapshot.params['id']
+    this.findByIdPostagem(this.idPost)
   }
 
   findByIdPostagem(id: number){
@@ -43,9 +40,10 @@ export class PostagemDeleteComponent implements OnInit {
     })
   }
 
+
   apagar(){
-    this.postagemService.deletePostagem(this.idPostagem).subscribe(() => {
-      alert('Postagem apagada com sucesso!')
+    this.postagemService.deletePostagem(this.idPost).subscribe(()=>{
+      this.alertas.showAlertSuccess('Postagem apagada com sucesso!')
       this.router.navigate(['/inicio'])
     })
   }
